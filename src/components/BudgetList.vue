@@ -3,7 +3,7 @@
     <ElCard>
       <div slot="header" class="card-header" @click="onClickFilter">
         <span class="card-header-title"
-          >{{ header }}: <span class="filter">{{ lastFilter }}</span></span
+          >{{ header }}: <span class="filter">{{ lastfilter }}</span></span
         >
         <ElButton type="danger" size="mini" data-type="INCOME">
           sort +</ElButton
@@ -14,7 +14,7 @@
         <ElButton type="danger" size="mini" data-type="ALL"> show all</ElButton>
       </div>
       <template v-if="!isEmpty">
-        <BudgetListItem :list-item="list" @deleteItem="deleteItemRout" />
+        <BudgetListItem />
       </template>
       <ElAlert v-else type="info" :title="emptyTitle" :closable="false" />
     </ElCard>
@@ -23,43 +23,33 @@
 
 <script>
 import BudgetListItem from '@/components/BudgetListItem';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'BudgetList',
   components: { BudgetListItem },
-  props: {
-    list: {
-      type: Object,
-      default: () => ({}),
-    },
-    lastFilter: {
-      type: String,
-    },
-  },
   data: () => ({
     header: 'Budget List',
     emptyTitle: 'Empty List',
+    lastfilter: 'ALL',
   }),
   methods: {
-    deleteItemRout(id) {
-      this.$emit('deleteItemRout', id);
-    },
     onClickFilter(e) {
       if (
         e.target.parentElement.tagName == 'BUTTON' ||
         e.target.tagName == 'BUTTON'
       ) {
-        let type = e.target.parentElement.dataset.type || e.target.dataset.type;
-        // console.dir(e.target.parentElement.dataset.type);
-
-        this.$emit('onClickFilter', type);
+        this.lastfilter =
+          e.target.parentElement.dataset.type || e.target.dataset.type;
+        this.filterList(this.lastfilter);
       }
     },
   },
   computed: {
+    ...mapGetters('budgetList', ['getList', 'filterList']),
     isEmpty() {
       // console.log(this.list, Object.keys(this.list).length);
-      return !Object.keys(this.list).length || 'empty' in this.list;
+      return !Object.keys(this.getList).length;
     },
   },
 };

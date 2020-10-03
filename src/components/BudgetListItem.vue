@@ -1,6 +1,6 @@
 <template>
   <div class="list-item-wrap" id="BudgetListItem">
-    <div class="list-item" v-for="(item, prop) in listItem" :key="prop">
+    <div class="list-item" v-for="(item, prop) in getList" :key="prop">
       <span class="budget-comment">{{ item.comment }}</span>
       <span class="budget-value" :class="toggleClass(item.value)"
         >{{ item.value }} <i :class="toggleIcon(item.value)"></i
@@ -20,28 +20,26 @@
 <script>
 import DeleteDialog from './DeleteDialog';
 import { changeColorValue } from '../helpers/classHelper';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
   name: 'BudgetListItem',
   components: { DeleteDialog },
-  props: {
-    listItem: {
-      type: Object,
-      default: () => ({}),
-    },
-  },
+
   data: () => ({
     dialogVisible: false,
     isConfirm: false,
     currentId: undefined,
   }),
   methods: {
+    ...mapActions('budgetList', ['delete_item']),
     showDialog(id) {
       this.dialogVisible = true;
       this.currentId = id;
     },
     deleteItem() {
-      this.$emit('deleteItem', this.currentId);
+      //инициируем мутацию состояния state
+      this.delete_item(this.currentId);
     },
     onCancelDialog(value) {
       this.dialogVisible = value;
@@ -56,7 +54,9 @@ export default {
       return changeColorValue('icon', val);
     },
   },
-  computed: {},
+  computed: {
+    ...mapGetters('budgetList', ['getList']),
+  },
 };
 </script>
 

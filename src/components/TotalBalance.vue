@@ -1,27 +1,23 @@
 <template>
   <div class="total-value" :class="toggleClass">
-    Balance: {{ total }} <i :class="toggleIcon"></i>
+    Balance: {{ getTotalBalance }} <i :class="toggleIcon"></i>
   </div>
 </template>
 
 <script>
 import { changeColorValue } from '../helpers/classHelper';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'TotalBalance',
-  props: {
-    total: {
-      type: Number,
-      default: 0,
-      required: true,
-    },
-  },
+
   computed: {
+    ...mapGetters('budgetList', ['getTotalBalance']),
     toggleClass: function() {
-      return changeColorValue(null, this.total);
+      return changeColorValue(null, this.getTotalBalance);
     },
     toggleIcon: function() {
-      return changeColorValue('icon', this.total);
+      return changeColorValue('icon', this.getTotalBalance);
     },
   },
 };

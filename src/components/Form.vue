@@ -23,6 +23,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+
 export default {
   name: 'Form',
   data() {
@@ -66,10 +68,12 @@ export default {
     };
   },
   methods: {
+    ...mapActions('budgetList', ['add_list_item']),
     onSubmit() {
       this.$refs.addItemForm.validate((valid) => {
         if (valid) {
-          this.$emit('submitForm', { ...this.formData });
+          //отправляем данные в state вызвав мутацию
+          this.add_list_item({ ...this.formData });
           this.$refs.addItemForm.resetFields();
         }
       });
